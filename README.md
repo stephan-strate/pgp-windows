@@ -59,3 +59,20 @@ List of contents:
         - Thunderbird
         - Outlook
     - SSH Authentication
+
+# Fedora usage
+
+In order to get a Smartcard working, which has already configured with a private key, perform the following actions on client side in terminal:
+
+- Make sure `~/.gnupg/gpg.conf` contains 'use-agent'
+- Add ssh support to gnupg-agent by adding 'enable-ssh-support' to `~/.gnupg/gpg-agent.conf`
+    If the file does not exist, create it.
+- Add the following code somewhere into your `~/.bashrc`
+    ```
+    unset SSH_AGENT_PID
+    if [ "${gnupg_SSH_AUTH_SOCK_by:-0}" -ne $$ ]; then
+    export SSH_AUTH_SOCK="$(gpgconf --list-dirs agent-ssh-socket)"
+    fi
+    ```
+- restart your system or try pkill gpg-agent and open a new commandline to make sure everything is set
+- In case of problems try `gpg2 --card-status` on first usage to make sure the gpg-agent started
